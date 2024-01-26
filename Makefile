@@ -8,7 +8,7 @@ OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
 TEST_SRC=$(wildcard tests/*_tests.c)
 TESTS=$(patsubst %.c,%,$(TEST_SRC))
 
-TARGET=build/libscipute.a
+TARGET=build/libscipute.so
 
 OS=$(shell lsb_release -si)
 ifeq ($(OS),Ubuntu)
@@ -21,10 +21,13 @@ all: $(TARGET) tests
 dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
 dev: all
 
-$(TARGET): CFLAGS += -fPIC
 $(TARGET): build $(OBJECTS)
-	ar rcs $@ $(OBJECTS)
-	ranlib $@
+	$(CC) -shared -o $@ $(OBJECTS) $(LDFLAGS)
+
+# $(TARGET): CFLAGS += -fPIC
+# $(TARGET): build $(OBJECTS)
+# 	ar rcs $@ $(OBJECTS)
+# 	ranlib $@
 
 build:
 	@mkdir -p build
